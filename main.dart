@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dashboard_screen.dart';
-
 
 void main() {
   runApp(MyApp());
@@ -10,7 +8,33 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginScreen(),
+      title: 'Bynyry',
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => LoginScreen(),
+      },
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Bynyry',
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => LoginScreen(),
+        '/dashboard': (context) => DashboardScreen(),
+      },
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        accentColor: Colors.deepOrangeAccent,
+      ),
     );
   }
 }
@@ -21,128 +45,137 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
-  String errorMessage = "";
-
-  // Simulating user authentication
-  Future<void> _authenticateUser() async {
-
-
-
-    await Future.delayed(Duration(seconds: 2));
-
-    // If authentication fails, show an error message
-    setState(() {
-      errorMessage = "Invalid email or password. Please try again.";
-    });
-
-    // Inside _LoginScreenState
-    Future<void> _authenticateUser() async {
-      // Simulating user authentication
-      await Future.delayed(Duration(seconds: 2));
-
-      setState(() {
-        errorMessage = ""; // Clear any previous error message
-      });
-
-      // Navigate to the DashboardScreen on successful login
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DashboardScreen()),
-      );
-    }
-    // If authentication succeeds, navigate to the next screen
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-  }
-
-  // Validate email format
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Email is required';
-    } else if (!RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$').hasMatch(value)) {
-      return 'Invalid email format';
-    }
-    return null;
-  }
-
-// Validate password format
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required';
-    } else if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    return null;
-  }
-
-
+  String _emailValidationError = '';
+  String _passwordValidationError = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextFormField(
-              controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                prefixIcon: Icon(Icons.email),
-                border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.blue, Colors.lightBlueAccent],
+            ),
+          ),
+          child: Center(
+            child: Card(
+              margin: EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Welcome back',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    SizedBox(height: 12.0),
+                    TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        errorText: _emailValidationError,
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        errorText: _passwordValidationError,
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: _performLogin,
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.deepOrangeAccent,
+                        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+                      ),
+                      child: Text(
+                        'Log In',
+                        style: TextStyle(fontSize: 18.0),
+                      ),
+                    ),
+                    SizedBox(height: 8.0),
+                    TextButton(
+                      onPressed: _navigateToForgetPassword,
+                      child: Text(
+                        "Forgot Password?",
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    TextButton(
+                      onPressed: _navigateToSignUp,
+                      child: Text(
+                        "Don't have an account? Sign Up..!",
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              validator: _validateEmail,
             ),
-            SizedBox(height: 16),
-            TextFormField(
-              controller: passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Icon(Icons.lock),
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
-              validator: _validatePassword,
-            ),
-            SizedBox(height: 16),
-            Text(
-              errorMessage,
-              style: TextStyle(color: Colors.red),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                if (_validateEmail(emailController.text) == null &&
-                    _validatePassword(passwordController.text) == null) {
-                  await _authenticateUser();
-                }
-              },
-              child: Text('Login'),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
-              ),
-            ),
-            SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                // Navigate to the sign-up screen
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen()));
-              },
-              child: Text(
-                'Don\'t have an account? Sign up',
-                style: TextStyle(color: Colors.blue),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
+
+  bool isValidEmail(String email) {
+    return RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$').hasMatch(email);
+  }
+
+  void _performLogin() {
+    setState(() {
+      _emailValidationError = '';
+      _passwordValidationError = '';
+    });
+
+    String userEmail = _emailController.text;
+    if (!isValidEmail(userEmail)) {
+      setState(() {
+        _emailValidationError = 'Invalid email format';
+      });
+      return;
+    }
+
+    String userPassword = _passwordController.text;
+
+    if (userPassword != '123') {
+      setState(() {
+        _passwordValidationError = 'Incorrect password. Enter 123';
+      });
+      return;
+    }
+
+    _loginSuccess();
+  }
+
+  void _loginSuccess() {
+    Navigator.pushReplacementNamed(context, '/dashboard');
+  }
+
+
+
 }
+
+
