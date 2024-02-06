@@ -8,7 +8,7 @@ first page will be of login
 
 if dont have account click on SIGNUP
 
-then create the account using Email,Password,Confirm Password and Next page it will ask for OTP
+then create the account using Email,Password,Confirm Password and Next page 
 
 
 By using this Credentials user can login to the App
